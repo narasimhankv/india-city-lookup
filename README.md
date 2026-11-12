@@ -2,14 +2,21 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8** (November 2026). **Download:** `india_city_lookup.parquet` (225 MB) from the [Releases](../../releases) page. SHA-256 starts `be13c2cef564`.
+**Version 8.1** (November 2026). **Download:** `india_city_lookup.parquet` (225 MB) from the [Releases](../../releases) page. SHA-256 starts `4f768a1c9bc3`.
 
-- 732,691 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
+- 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
 
 ## How close to Google Maps?
 
-On 2,016 random points (56 per state/UT), `google_name` matches the place name Google Maps gives at 53%, and Google's name is among `google_name`, `locality` and `alt_names` at 74%. Strongest: Delhi, Karnataka, Tamil Nadu, Andhra Pradesh (84-98%); weakest: hill, forest and island areas (Meghalaya, Arunachal Pradesh, Lakshadweep, Jammu and Kashmir: 12-23%). Most differences are Google using its own village boundaries or hamlet names that no official source has.
+On 2,016 random points (56 per state/UT), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.1
+
+- Old town polygons that were later split into several municipalities now take each municipality's name (e.g. Kalamassery is no longer labelled Thrikkakara; Valanchery no longer Tanur).
+- Andhra Pradesh: villages absorbed into expanded corporations keep their village name in `google_name` (as Google does); `city` is still the corporation.
+- Lakshadweep: `google_name` drops the "Island" suffix (Amini Island → Amini).
+- Kota North/South and Jodhpur North/South corporations are named Kota and Jodhpur.
 
 ## Lookup
 
