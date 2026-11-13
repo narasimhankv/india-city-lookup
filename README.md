@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.5** (November 2026). **Download:** `india_city_lookup.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `3e4bba7b5fcd`.
+**Version 8.5** (November 2026). **Download:** `india_city_lookup_v8.5.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `3e4bba7b5fcd`.
 
 - 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
