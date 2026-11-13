@@ -2,14 +2,25 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.7** (November 2026). **Download:** `india_city_lookup_v8.7.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `58be06627726`.
+**Version 8.8** (November 2026). **Download:** `india_city_lookup_v8.8.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `54d004ee4510`.
 
-- 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
+- 732,868 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
 
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.8
+
+- Uttarkashi (Uttarakhand) no longer covers 4,136 km² of the Himalaya. The source map drew the town as one polygon over 96% of Bhatwari tehsil, so points at Harsil, Gaumukh or Nelang came back as "Uttarkashi, 0 km". Survey of India's village map has the same polygon and Bhuvan has none there, so it was cut by the rule already used for other oversized towns:
+  - the town keeps a 2 km footprint around the town centre (6.8 km²);
+  - the empty remainder is split into 104 areas named after the nearest village of Uttarkashi district (`locality_type` "Nearest named village", `geo_level` "village (approx.)"), plus Harsil, a Census 2011 village that had no polygon, as its own approximate village area;
+  - each new area names its own nearest town: Gangotri for the upper valley (Harsil 19.8 km, Gaumukh and Nelang 17.6 km), Uttarkashi for the lower valley.
+- The town's reference point for nearest-town lookups had been the middle of the big polygon, 45 km from the town. Three villages near Nelang and Jadung that took Uttarkashi as their nearest town through it now name Gangotri.
+- 132 villages that bordered the big polygon listed "Uttarkashi" in `alt_names` only because they touched it; it is replaced by the new areas they now border.
+- 104 rows are added right after the Uttarkashi row, so row numbers after it shift by 104. No other polygon changed.
+- Still to do: a few other town polygons that are far larger than the town (e.g. Valparai, Pokaran, Mudumalai).
 
 ## Changes in 8.7
 
@@ -84,7 +95,7 @@ Urban centre outlines for `adjusted_city`: European Commission, Joint Research C
 
 Current city limits (8.4): municipal ward maps from Swachh Bharat Mission and the NIUA Living Atlas (via ramSeraph/indian_admin_boundaries), the Pune ward map from OpenCity (Open Database License), and the Tiruchirappalli corporation limits from OpenStreetMap.
 
-Checks in 8.7 used OpenStreetMap (© OpenStreetMap contributors, ODbL) via the Overpass API and Survey of India place names (via ramSeraph/indian_admin_boundaries).
+Checks in 8.7 and 8.8 used OpenStreetMap (© OpenStreetMap contributors, ODbL) via the Overpass API and Survey of India place names (via ramSeraph/indian_admin_boundaries).
 
 Locations of about 300 towns come from OpenStreetMap via Nominatim: © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/).
 
