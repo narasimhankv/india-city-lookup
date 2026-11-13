@@ -13,7 +13,7 @@ On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches
 
 ## Changes in 8.4
 
-- City limits brought up to date for 17 cities whose municipal boundary had been expanded since our source maps were drawn, using current municipal ward maps: Pune, Chennai, Coimbatore, Madurai, Tiruchirappalli, Tiruppur, Erode, Karur, Kancheepuram, Hosur, Warangal, Prayagraj, Guwahati, Silchar, Srinagar, Jammu and Sonipat. For example, Pune grows from 219 to 486 km² (Wagholi and the other merged villages), Warangal from 63 to 392 km², and Chennai takes in the 16 municipalities merged in 2011 (Ambattur, Alandur, Tiruvottiyur and others). Villages and census towns inside the new limits are now part of the city in `city` and the local body columns (their village name stays in `locality` and `google_name`), and about 1,900 nearby villages now name the grown city as their nearest town.
+- City limits brought up to date for 17 cities whose municipal boundary had been expanded since our source maps were drawn, using current municipal ward maps: Pune, Chennai, Coimbatore, Madurai, Tiruchirappalli, Tiruppur, Erode, Karur, Kancheepuram, Hosur, Warangal, Prayagraj, Guwahati, Silchar, Srinagar, Jammu and Sonipat. For example, Pune grows from 219 to 486 km² (Wagholi and the other merged villages), Warangal from 63 to 392 km², and Chennai takes in the 16 municipalities and town panchayats merged in 2011 (Ambattur, Alandur, Tiruvottiyur and others). Villages and census towns inside the new limits are now part of the city in `city` and the local body columns (their village name stays in `locality` and `google_name`), and about 1,900 nearby villages now name the grown city as their nearest town.
 - `Phulpur_Al` is now `Phulpur`.
 
 ## Changes in 8.3
