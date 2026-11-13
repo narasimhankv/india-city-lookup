@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.6** (November 2026). **Download:** `india_city_lookup_v8.6.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `7dd90cfaf4e8`.
+**Version 8.7** (November 2026). **Download:** `india_city_lookup_v8.7.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `58be06627726`.
 
 - 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -10,6 +10,15 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.7
+
+Town pieces and village codes that 8.6 could not settle were checked against OpenStreetMap and Survey of India place names, and every change was confirmed with the Google Maps Geocoding API (231 lookups; Google results were used only to check, not stored).
+
+- 123 town pieces in 76 places that were attached to a same-named town far away are fixed: 56 now take the town they actually lie in (e.g. villages near Kichha no longer say Khatima) and 67 become ordinary villages. In 19 of these places the larger group of pieces was the wrong one (e.g. Erattupetta, Budhlada, Rudraprayag).
+- 66 village codes that belong to a same-named village elsewhere are cleared, with the gram panchayat and block that came from them.
+- About 5,300 nearby villages that had picked one of those wrong pieces as their nearest town now name their real nearest town.
+- Where OpenStreetMap and Google disagreed (two real towns with the same name, e.g. Rampur in Himachal Pradesh, Shahpur in Madhya Pradesh), nothing was changed.
 
 ## Changes in 8.6
 
@@ -74,6 +83,8 @@ Built from Survey of India and LGD/Bharatmaps village boundaries, Bhuvan (NRSC) 
 Urban centre outlines for `adjusted_city`: European Commission, Joint Research Centre, GHS Urban Centre Database R2024A (GHSL), CC BY 4.0. Main-city list: Census of India 2011 urban agglomerations.
 
 Current city limits (8.4): municipal ward maps from Swachh Bharat Mission and the NIUA Living Atlas (via ramSeraph/indian_admin_boundaries), the Pune ward map from OpenCity (Open Database License), and the Tiruchirappalli corporation limits from OpenStreetMap.
+
+Checks in 8.7 used OpenStreetMap (© OpenStreetMap contributors, ODbL) via the Overpass API and Survey of India place names (via ramSeraph/indian_admin_boundaries).
 
 Locations of about 300 towns come from OpenStreetMap via Nominatim: © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/).
 
