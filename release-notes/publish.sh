@@ -9,7 +9,7 @@ declare -A FILE=(
   [v8.5]=india_city_lookup_v8.5.parquet [v8.6]=india_city_lookup_v8.6.parquet [v8.7]=india_city_lookup_v8.7.parquet
   [v8.8]=india_city_lookup_v8.8.parquet [v8.9]=india_city_lookup_v8.9.parquet [v8.10]=india_city_lookup_v8.10.parquet
 )
-for tag in v8.1 v8.3 v8.4 v8.5 v8.6 v8.7 v8.8 v8.9 v8.10; do
+for tag in v8.1 v8.3 v8.4 v8.5 v8.8 v8.9 v8.10; do   # 8.6 and 8.7 are folded into 8.8
   notes=release-notes/$tag.md
   title="Version ${tag#v}"
   if gh release view "$tag" --repo "$REPO" >/dev/null 2>&1; then
