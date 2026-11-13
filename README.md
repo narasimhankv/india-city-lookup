@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.9** (November 2026). **Download:** `india_city_lookup_v8.9.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `3b85a719ea62`.
+**Version 8.10** (November 2026). **Download:** `india_city_lookup_v8.10.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `aa689535bf1a`.
 
 - 732,868 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -10,6 +10,19 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.10
+
+The review checks were rebuilt so that they flag only real errors (against the current Local Government Directory, with stricter name and distance rules), and what they found is fixed. On 8.9 the checks found 87,000 problems; on 8.10, 309 are left, mostly cases with conflicting sources (below). Polygons are unchanged.
+
+- **Block** (63,019 rows): 38,975 blank blocks filled and 24,044 outdated blocks updated from the village's current LGD block (e.g. Mangaluru → Ullal). The old block is kept in the new column `old_block`.
+- **Gram panchayat** (16,078 rows): `local_body` and `local_body_code` follow the village's current panchayat after reorganisations.
+- **Village code** (215 rows) that named a different village (different name and its Census point far away): 98 replaced by the right village of the same taluk, 117 cleared with the panchayat that came from them.
+- **Nearest town** (1,855 rows) and **nearest local town** (7,363 rows) where another town was clearly nearer (at least 5 km and 30% closer), the named town did not exist, or the recorded distance was more than 10 km off. `adjusted_city` follows. 17 villages that were in a town only by name (e.g. Jalalpur, Barharia in Bihar) now name their nearest town.
+- **Taluk** (436 rows): Andhra Pradesh mandals split into Urban and Rural (e.g. Kurnool → Kurnool Rural).
+- **alt_names**: 4,704 names of far-away namesakes dropped (e.g. Panihati on villages near Bongaon). Old official names stay.
+- Smaller fixes: leftover spellings of renamed towns (Ahmedanagar, Rourkela Town, Uran Islampur Muncipal), a "Municipal boundary" placeholder used as a town name in Jalandhar, `adjusted_city` "Boundary" for Sri Hargobindpur, Faizabad (Haryana) no longer shown as Ayodhya, and 22 town rows whose locality named another town.
+- Left for review (`v810_left_for_review.csv` with the release): 194 villages that lie well inside a different municipality on the Swachh Bharat map (that map and the municipal directory disagree), 75 village codes found in neither LGD nor Census 2011, and 37 nearest-town distances where a town has pieces far apart.
 
 ## Changes in 8.9
 
@@ -90,14 +103,14 @@ hit = hit[~hit.index.duplicated()]   # village rows (priority 1) beat taluk rows
 
 ## Columns
 
-`state`, `district`, `taluk`, `block`, `village`, `village_code`, `village_type`, `locality`, `locality_type`, `city`, `city_type`, `city_distance_km`, `city_method`, `nearest_local_town`, `nearest_local_town_type`, `nearest_local_town_km`, `local_body`, `local_body_type`, `local_body_code`, `geo_level`, `lookup_priority`, `source`, `village_name_in_source`, `geometry`, `google_name`, `alt_names` (list), `bbox`, `adjusted_city`, `old_state`, `old_district`, `old_taluk`
+`state`, `district`, `taluk`, `block`, `village`, `village_code`, `village_type`, `locality`, `locality_type`, `city`, `city_type`, `city_distance_km`, `city_method`, `nearest_local_town`, `nearest_local_town_type`, `nearest_local_town_km`, `local_body`, `local_body_type`, `local_body_code`, `geo_level`, `lookup_priority`, `source`, `village_name_in_source`, `geometry`, `google_name`, `alt_names` (list), `bbox`, `adjusted_city`, `old_state`, `old_district`, `old_taluk`, `old_block`
 
 - `locality`: official village or town name
 - `city`: the municipal body containing the area, otherwise the nearest town (`city_distance_km`)
 - `google_name`: town name inside a municipal boundary, otherwise `locality`
 - `alt_names`: town, bordering villages and gram panchayat, for fuzzy matching against other geocoders or typed addresses
 - `adjusted_city`: `city` with suburbs merged into their main city and names cleaned and made unique (see Changes in 8.3)
-- `old_state`, `old_district`, `old_taluk`: the earlier name where the state, district or taluk was renamed or the area moved to a new unit (see Changes in 8.9)
+- `old_state`, `old_district`, `old_taluk`, `old_block`: the earlier name where the state, district, taluk or block was renamed or the area moved to a new unit (see Changes in 8.9 and 8.10)
 
 ## Sources and attribution
 
