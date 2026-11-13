@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.8** (November 2026). **Download:** `india_city_lookup_v8.8.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `54d004ee4510`.
+**Version 8.9** (November 2026). **Download:** `india_city_lookup_v8.9.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `3b85a719ea62`.
 
 - 732,868 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -10,6 +10,17 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.9
+
+State, district and taluk names now follow the current official list (the Local Government Directory as of 12 November 2026), and towns that were renamed by notification carry their new name. Old names are kept for lookups. Polygons are unchanged.
+
+- **District** (83,496 rows): each village is placed in its current district through its village code (or, without a code, through the villages around it), so the new districts formed since the old maps are filled in, e.g. Mauganj (from Rewa), Balotra, Phalodi, Salumbar and the other new Rajasthan districts, the 2022 Andhra Pradesh districts, Vav-Tharad, Bengaluru South, the new Ladakh and Delhi districts. Renamed districts take the new name: Ahmednagar → Ahilyanagar, Aurangabad → Chhatrapati Sambhajinagar, Osmanabad → Dharashiv, Karimganj → Sribhumi, Hoshangabad → Narmadapuram, Medinipur West → Paschim Medinipur, Cuttack → Kataka, Y.S.R. → Y.S.R. Kadapa and others. Spelling variants are left alone unless the government issued an official spelling correction (e.g. Uttar Kashi → Uttarkashi, Pondicherry → Puducherry, and Odisha's 2026 spelling list).
+- **Taluk** (84,763 rows): the same for sub-districts, including the new tehsils created since 2022 and renamed ones (e.g. Velhe → Rajgad, Mugalsarai → Pandit Deendayal Upadhyay Nagar).
+- **State**: Kerala → Keralam (Kerala (Alteration of Name) Act, 2026, in force from 25 August 2026).
+- **Towns**: renamed towns take the new name in `city`, `google_name`, `adjusted_city`, `nearest_local_town`, the municipal `local_body` and the town's `locality`, for example Ahmednagar → Ahilyanagar, Aurangabad (Maharashtra) → Chhatrapati Sambhajinagar, Islampur (Sangli) → Ishwarpur, Mughalsarai → Pandit Deen Dayal Upadhyaya Nagar, Babai → Makhan Nagar, Nasrullaganj → Bhairunda, Bhavra → Chandra Shekhar Azad Nagar, and the 64 Odisha spellings of June 2026 (Cuttack → Kataka, Berhampur → Brahmapur, Jeypore → Jayapur, Talcher → Talacher, Rourkela → Raurkela and others; blocks too).
+- **Old names for lookups**: new columns `old_state`, `old_district` and `old_taluk` hold the previous name (empty when unchanged); a renamed town's old name is added to `alt_names`.
+- Left as they were: Mahe and Yanam (Puducherry), and the Pakistan-administered districts listed under Jammu and Kashmir. Jalalabad (Shahjahanpur) → Parshurampuri is not applied yet because its gazette notification has not been published.
 
 ## Changes in 8.8
 
@@ -79,13 +90,14 @@ hit = hit[~hit.index.duplicated()]   # village rows (priority 1) beat taluk rows
 
 ## Columns
 
-`state`, `district`, `taluk`, `block`, `village`, `village_code`, `village_type`, `locality`, `locality_type`, `city`, `city_type`, `city_distance_km`, `city_method`, `nearest_local_town`, `nearest_local_town_type`, `nearest_local_town_km`, `local_body`, `local_body_type`, `local_body_code`, `geo_level`, `lookup_priority`, `source`, `village_name_in_source`, `geometry`, `google_name`, `alt_names` (list), `bbox`, `adjusted_city`
+`state`, `district`, `taluk`, `block`, `village`, `village_code`, `village_type`, `locality`, `locality_type`, `city`, `city_type`, `city_distance_km`, `city_method`, `nearest_local_town`, `nearest_local_town_type`, `nearest_local_town_km`, `local_body`, `local_body_type`, `local_body_code`, `geo_level`, `lookup_priority`, `source`, `village_name_in_source`, `geometry`, `google_name`, `alt_names` (list), `bbox`, `adjusted_city`, `old_state`, `old_district`, `old_taluk`
 
 - `locality`: official village or town name
 - `city`: the municipal body containing the area, otherwise the nearest town (`city_distance_km`)
 - `google_name`: town name inside a municipal boundary, otherwise `locality`
 - `alt_names`: town, bordering villages and gram panchayat, for fuzzy matching against other geocoders or typed addresses
 - `adjusted_city`: `city` with suburbs merged into their main city and names cleaned and made unique (see Changes in 8.3)
+- `old_state`, `old_district`, `old_taluk`: the earlier name where the state, district or taluk was renamed or the area moved to a new unit (see Changes in 8.9)
 
 ## Sources and attribution
 
@@ -95,10 +107,12 @@ Urban centre outlines for `adjusted_city`: European Commission, Joint Research C
 
 Current city limits (8.4): municipal ward maps from Swachh Bharat Mission and the NIUA Living Atlas (via ramSeraph/indian_admin_boundaries), the Pune ward map from OpenCity (Open Database License), and the Tiruchirappalli corporation limits from OpenStreetMap.
 
+Current district and taluk names (8.9): Local Government Directory (lgdirectory.gov.in) daily exports via ramSeraph/opendata.
+
 Checks in 8.7 and 8.8 used OpenStreetMap (© OpenStreetMap contributors, ODbL) via the Overpass API and Survey of India place names (via ramSeraph/indian_admin_boundaries).
 
 Locations of about 300 towns come from OpenStreetMap via Nominatim: © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/).
 
 ## Known limits
 
-Census 2011 coordinates; LGD directories from 2022; boundaries 2023–25. Village areas in Arunachal Pradesh, Meghalaya, Manipur, Nagaland and Ladakh are approximate (Voronoi cells around census points). No municipal boundaries for West Bengal, Tripura, Manipur, Meghalaya, Mizoram, Andaman and Nicobar, or Dadra and Nagar Haveli and Daman and Diu.
+Census 2011 coordinates; district and taluk names from the LGD directory of November 2026; boundaries 2023–25. Village areas in Arunachal Pradesh, Meghalaya, Manipur, Nagaland and Ladakh are approximate (Voronoi cells around census points). No municipal boundaries for West Bengal, Tripura, Manipur, Meghalaya, Mizoram, Andaman and Nicobar, or Dadra and Nagar Haveli and Daman and Diu.
