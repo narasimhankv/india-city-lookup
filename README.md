@@ -13,7 +13,7 @@ On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches
 
 ## Changes in 8.10
 
-The review checks were rebuilt so that they flag only real errors (against the current Local Government Directory, with stricter name and distance rules), and what they found is fixed. On 8.9 the checks found 87,000 problems; on 8.10, 309 are left, mostly cases with conflicting sources (below). Polygons are unchanged.
+The review checks were rebuilt so that they flag only real errors (against the current Local Government Directory, with stricter name and distance rules), and what they found is fixed. On 8.9 the checks found 93,083 problems; on 8.10, 309 are left, mostly cases with conflicting sources (below). Polygons are unchanged.
 
 - **Block** (63,019 rows): 38,975 blank blocks filled and 24,044 outdated blocks updated from the village's current LGD block (e.g. Mangaluru → Ullal). The old block is kept in the new column `old_block`.
 - **Gram panchayat** (16,078 rows): `local_body` and `local_body_code` follow the village's current panchayat after reorganisations.
