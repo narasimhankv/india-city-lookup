@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.3** (November 2026). **Download:** `india_city_lookup.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `9054d70f9fcf`.
+**Version 8.4** (November 2026). **Download:** `india_city_lookup.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `c47185e4be2a`.
 
 - 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -10,6 +10,11 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.4
+
+- City limits brought up to date for 17 cities whose municipal boundary had been expanded since our source maps were drawn, using current municipal ward maps: Pune, Chennai, Coimbatore, Madurai, Tiruchirappalli, Tiruppur, Erode, Karur, Kancheepuram, Hosur, Warangal, Prayagraj, Guwahati, Silchar, Srinagar, Jammu and Sonipat. For example, Pune grows from 219 to 486 km² (Wagholi and the other merged villages), Warangal from 63 to 392 km², and Chennai takes in the 16 municipalities merged in 2011 (Ambattur, Alandur, Tiruvottiyur and others). Villages and census towns inside the new limits are now part of the city in `city` and the local body columns (their village name stays in `locality` and `google_name`), and about 1,900 nearby villages now name the grown city as their nearest town.
+- `Phulpur_Al` is now `Phulpur`.
 
 ## Changes in 8.3
 
@@ -51,6 +56,8 @@ hit = hit[~hit.index.duplicated()]   # village rows (priority 1) beat taluk rows
 Built from Survey of India and LGD/Bharatmaps village boundaries, Bhuvan (NRSC) village layers, LGD sub-district boundaries and directories, Swachh Bharat Mission municipal boundaries, and Census 2011 village points, largely via the [ramSeraph/indian_admin_boundaries](https://github.com/ramSeraph/indian_admin_boundaries) releases and the [planemad LGD mirror](https://github.com/planemad/india-local-government-directory). Check each source's terms before commercial use.
 
 Urban centre outlines for `adjusted_city`: European Commission, Joint Research Centre, GHS Urban Centre Database R2024A (GHSL), CC BY 4.0. Main-city list: Census of India 2011 urban agglomerations.
+
+Current city limits (8.4): municipal ward maps from Swachh Bharat Mission and the NIUA Living Atlas (via ramSeraph/indian_admin_boundaries), the Pune ward map from OpenCity (Open Database License), and the Tiruchirappalli corporation limits from OpenStreetMap.
 
 Locations of about 300 towns come from OpenStreetMap via Nominatim: © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/).
 
