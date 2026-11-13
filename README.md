@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.5** (November 2026). **Download:** `india_city_lookup_v8.5.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `3e4bba7b5fcd`.
+**Version 8.6** (November 2026). **Download:** `india_city_lookup_v8.6.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `7dd90cfaf4e8`.
 
 - 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -10,6 +10,17 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.6
+
+Every field is now checked against where the polygon actually lies, and the clear errors this found are fixed (23,958 rows changed; polygons and source names unchanged).
+
+- District and taluk come from the location for 474 rows that had been filed under a same-named unit elsewhere, e.g. Chakan (Khed taluk, Pune) was filed under Khed taluk of Ratnagiri.
+- Village codes: 2,461 codes that belonged to another village (wrong district, or Census location more than 10 km away) are replaced by the right code from the LGD directory, with its block and gram panchayat; 1,338 codes from another district with no match found are cleared.
+- Towns: 250 town pieces that were attached to a town by name only, more than 8 km from it, now take the town they lie in (e.g. the Rajgurunagar polygon is no longer labelled Chakan) or become ordinary villages; 3,946 town rows get their missing local body.
+- Nearest town: villages whose nearest town was a same-named town in the wrong place (e.g. Patesar in Kaimur, Bihar named Chakia, the Uttar Pradesh town across the border) now name their real nearest town; 12,022 rows changed `city`, mostly villages that pointed at one of the wrongly placed town pieces.
+- `google_name`: villages that only share a name with a renamed city keep their own name (a village called Faizabad no longer shows Ayodhya).
+- Still to do: old district and taluk names after reorganisations (Andhra Pradesh 2022 and others, about 48,000 rows), and about 220 town pieces where it is unclear which of two same-named places is right.
 
 ## Changes in 8.5
 
