@@ -14,14 +14,14 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 | [8.10](../../releases/tag/v8.10) | `india_city_lookup_v8.10.parquet` | 226 MB | 732,868 | `aa689535bf1a` | Checks tightened; blocks, panchayats, codes, nearest towns fixed |
 | [8.9](../../releases/tag/v8.9) | `india_city_lookup_v8.9.parquet` | 226 MB | 732,868 | `3b85a719ea62` | Current district, taluk and town names; old names kept |
 | [8.8](../../releases/tag/v8.8) | `india_city_lookup_v8.8.parquet` | 226 MB | 732,868 | `54d004ee4510` | Uttarkashi's oversized town polygon split |
-| [8.7](../../releases/tag/v8.7) | `india_city_lookup_v8.7.parquet` | 226 MB | 732,764 | `58be06627726` | Town pieces and codes settled with OSM + Survey of India |
-| [8.6](../../releases/tag/v8.6) | `india_city_lookup_v8.6.parquet` | 226 MB | 732,764 | `7dd90cfaf4e8` | Every field checked against location |
+| 8.7 | not released separately (included in 8.8) | — | 732,764 | — | Town pieces and codes settled with OSM + Survey of India |
+| 8.6 | not released separately (included in 8.8) | — | 732,764 | — | Every field checked against location |
 | [8.5](../../releases/tag/v8.5) | `india_city_lookup_v8.5.parquet` | 226 MB | 732,764 | `3e4bba7b5fcd` | Nearest town always in the same state |
 | [8.4](../../releases/tag/v8.4) | `india_city_lookup_v8.4.parquet` | 226 MB | 732,764 | `c47185e4be2a` | Current city limits for 17 cities |
 | [8.3](../../releases/tag/v8.3) | `india_city_lookup_v8.3.parquet` | 226 MB | 732,764 | `9054d70f9fcf` | New adjusted_city column |
 | [8.1](../../releases/tag/v8.1) | `india_city_lookup.parquet` | 225 MB | 732,764 | `4f768a1c9bc3` | Town splits, Andhra and Lakshadweep names |
 
-Full SHA-256 values are in each release's notes. Use the latest version unless you need to reproduce an older result.
+8.6 and 8.7 were not published as files of their own; their changes are in 8.8 and later. Full SHA-256 values are in each release's notes. Use the latest version unless you need to reproduce an older result.
 
 ## How close to Google Maps?
 
