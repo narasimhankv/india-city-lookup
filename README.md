@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.4** (November 2026). **Download:** `india_city_lookup.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `c47185e4be2a`.
+**Version 8.5** (November 2026). **Download:** `india_city_lookup.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `3e4bba7b5fcd`.
 
 - 732,764 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -10,6 +10,11 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.5
+
+- `city` (for villages outside towns) and `nearest_local_town` now always name a town in the village's own state. Before, a village near a state border could get a town across the border, e.g. Sholayur (Attappadi, Kerala) → Thondamuthur (Tamil Nadu); it now gets Mannarkkad, 23 km away. 26,573 villages changed `city` and 22,296 changed `nearest_local_town`; such rows say "(same state)" in `city_method`. Lakshadweep's islands no longer name mainland Kerala and Karnataka towns.
+- In a few remote border areas the nearest town in the same state is far away (e.g. parts of Gariyaband, Chhattisgarh, about 95 km); `city_distance_km` shows it.
 
 ## Changes in 8.4
 
