@@ -2,7 +2,7 @@
 
 One GeoParquet file that turns any latitude/longitude in India into state, district, taluk, village, locality, city and local body, with a single point-in-polygon join. Offline, no per-lookup cost.
 
-**Version 8.10** (November 2026). **Download:** `india_city_lookup_v8.10.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `aa689535bf1a`.
+**Version 8.11** (November 2026). **Download:** `india_city_lookup_v8.11.parquet` (226 MB) from the [Releases](../../releases) page. SHA-256 starts `dd9f6cc6525e`.
 
 - 732,868 polygons covering all 36 states and union territories (village polygons, approximate village areas in the Northeast and Ladakh, and taluk polygons as a fallback)
 - GeoParquet 1.1, WKB geometry in EPSG:4326, zstd compression, `bbox` covering column
@@ -11,6 +11,7 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 
 | Version | File | Size | Rows | SHA-256 starts | Main change |
 |---|---|---|---|---|---|
+| [8.11](../../releases/tag/v8.11) | `india_city_lookup_v8.11.parquet` | 226 MB | 732,868 | `dd9f6cc6525e` | Villages follow their nearest town's adjusted_city |
 | [8.10](../../releases/tag/v8.10) | `india_city_lookup_v8.10.parquet` | 226 MB | 732,868 | `aa689535bf1a` | Checks tightened; blocks, panchayats, codes, nearest towns fixed |
 | [8.9](../../releases/tag/v8.9) | `india_city_lookup_v8.9.parquet` | 226 MB | 732,868 | `3b85a719ea62` | Current district, taluk and town names; old names kept |
 | [8.8](../../releases/tag/v8.8) | `india_city_lookup_v8.8.parquet` | 226 MB | 732,868 | `54d004ee4510` | Uttarkashi's oversized town polygon split |
@@ -26,6 +27,14 @@ One GeoParquet file that turns any latitude/longitude in India into state, distr
 ## How close to Google Maps?
 
 On 2,016 random points (56 per state/UT, measured on 8.1), `google_name` matches the place name Google Maps gives at 55%, and Google's name is among `google_name`, `locality` and `alt_names` at 75%. Strongest: Delhi, Andhra Pradesh, Karnataka, Tamil Nadu (86-98%); weakest: hill and forest areas (Meghalaya, Arunachal Pradesh, Jammu and Kashmir: 12-23%). Most differences are Google naming the neighbouring village, or using hamlet names that no official source has.
+
+## Changes in 8.11
+
+- **`adjusted_city` for villages outside towns now follows the town they name** (6,440 rows). When a small town was merged into a bigger city, its own rows already showed the bigger city, but villages that named it as their nearest town still showed the small town. Example: Elinjipra is merged into Chalakudy, yet Kodassery, Kuttichira and Pariyaram (nearest town Elinjipra) showed "Elinjipra"; they now show Chalakudy. Other examples: Kharar → S.A.S. Nagar, Mango → Jamshedpur, Kasba Sultanpur → Sultanpur, Swargashram → Rishikesh, Old Malda → English Bazar.
+  - 6,182 rows move to the bigger city; 258 rows get the same qualifier their town uses (e.g. Malegaon (Pune), Gaja (Tehri Garhwal)).
+  - Each village follows the nearest piece of its named town in the same state, and only when that piece is within the recorded distance plus 5 km, so villages are never matched to a far-away town of the same name.
+  - Towns' own rows are unchanged, so towns that were not merged keep their name (e.g. Aluva stays Aluva).
+- Only `adjusted_city` changed; every other column and all polygons are identical to 8.10.
 
 ## Changes in 8.10
 
